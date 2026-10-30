@@ -8,7 +8,7 @@
    ============================================================================ */
 'use strict';
 (function () {
-  const BUILD = 'nid2026v1';
+  const BUILD = 'nid2027v1';
   const $ = (s, r = document) => r.querySelector(s);
   const app = $('#app');
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g,
